@@ -1,6 +1,8 @@
 #!/bin/bash
 
+cp sample sample.abs
 ./abs2rel sample.abs sample.rel
-./freq sample.rel sample.freq
-./freq2tree sample.freq sample.tree
+
+compress sample.abs
+compress sample.rel
 

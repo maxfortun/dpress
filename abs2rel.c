@@ -3,18 +3,23 @@
 #include <errno.h>
 #include <string.h>
 
+#define BUFFER_SIZE 256
+
 void abs2rel(FILE *in, FILE *out) {
+	unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE*sizeof(unsigned char));
+    memset(buffer, 0, BUFFER_SIZE*sizeof(unsigned char));
+
 	int lastCh = 0;
-	int ch = 0;
 	do {
-        ch = fgetc(in);
-		if(feof(in)) {
-			break;
+		size_t inCount = fread(buffer, sizeof(unsigned char), BUFFER_SIZE, in);
+		for(int i = 0; i < inCount; i++) {
+			unsigned char ch = buffer[i];
+			int d = ch - lastCh;
+			buffer[i] = d;
+			lastCh = ch;
 		}
-		int d = ch - lastCh;
-		fputc(d, out);
-		lastCh = ch;
-    } while(ch != EOF); 
+		size_t outCount = fwrite (buffer, sizeof(unsigned char), inCount, out);
+    } while(!feof(in));
 }
 
 int main(int argc, char **argv) {
