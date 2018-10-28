@@ -8,29 +8,24 @@
 #define BUFFER_SIZE 256
 
 void freq(FILE *in, FILE *out) {
-	_freq *buffer = (_freq *)malloc(BUFFER_SIZE*sizeof(_freq));
-	memset(buffer, 0, BUFFER_SIZE*sizeof(_freq));
+    _freq *freqBuffer = (_freq *)malloc(BUFFER_SIZE*sizeof(_freq));
+    memset(freqBuffer, 0, BUFFER_SIZE*sizeof(_freq));
 
-	int ch = 0;
-	_freq pos = 0;
-	for(; pos < MAX_FREQ; pos++) {
-        ch = fgetc(in);
-		if(feof(in)) {
-			break;
+	unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE*sizeof(unsigned char));
+    memset(buffer, 0, BUFFER_SIZE*sizeof(unsigned char));
+
+	do {
+		size_t inCount = fread(buffer, sizeof(unsigned char), BUFFER_SIZE, in);
+		for(int i = 0; i < inCount; i++) {
+			unsigned char ch = buffer[i];
+			freqBuffer[ch]++;
 		}
-		buffer[ch]++;
-		printf("%d %d %d\n", pos, ch, buffer[ch]);
-    }
-	size_t count = fwrite (buffer, sizeof(_freq), BUFFER_SIZE, out);
-	if(count != BUFFER_SIZE) {
-    	printf ("Error writing data: %s\n", strerror(errno));
-	}
-	free(buffer);
-	if(pos < MAX_FREQ) {
-		printf("Frame incomplete at %d\n", pos);
-	} else {
-		printf("Frame complete at %d\n", pos);
-	}
+    } while(!feof(in));
+
+	size_t outCount = fwrite (freqBuffer, sizeof(_freq), BUFFER_SIZE, out);
+
+    free(buffer);
+    free(freqBuffer);
 }
 
 int main(int argc, char **argv) {

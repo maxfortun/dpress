@@ -3,25 +3,23 @@
 #include <errno.h>
 #include <string.h>
 
+#include "dpress.h"
+
 #define BUFFER_SIZE 256
 
-void abs2rel(FILE *in, FILE *out) {
-	unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE*sizeof(unsigned char));
-    memset(buffer, 0, BUFFER_SIZE*sizeof(unsigned char));
+void dec(FILE *in, FILE *out) {
+	_freq *buffer = (_freq *)malloc(BUFFER_SIZE*sizeof(_freq));
+	memset(buffer, 0, BUFFER_SIZE*sizeof(_freq));
 
-	int lastCh = 0;
 	do {
-		size_t inCount = fread(buffer, sizeof(unsigned char), BUFFER_SIZE, in);
+		size_t inCount = fread(buffer, sizeof(_freq), BUFFER_SIZE, in);
 		for(int i = 0; i < inCount; i++) {
-			unsigned char ch = buffer[i];
-			int d = ch - lastCh;
-			buffer[i] = d;
-			lastCh = ch;
+			_freq freq = buffer[i];
+			fprintf(out, "%d %lu\n", i, freq);
 		}
-		size_t outCount = fwrite (buffer, sizeof(unsigned char), inCount, out);
     } while(!feof(in));
 
-	free(buffer);
+    free(buffer);
 }
 
 int main(int argc, char **argv) {
@@ -37,7 +35,7 @@ int main(int argc, char **argv) {
 		exit(errno);
 	}
 
-	abs2rel(in, out);
+	dec(in, out);
 	
 	fclose(in);
 	fclose(out);
