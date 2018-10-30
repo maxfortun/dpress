@@ -11,9 +11,14 @@ typedef struct _graph_node_id {
 	_graph_node_id_index index;
 } _graph_node_id;
 
+typedef unsigned char _graph_weight;
+
 typedef struct _graph_edge {
 	_graph_node_id source_node_id;
 	_graph_node_id target_node_id;
+
+	// may need to introduce weight as a value or a function
+	// _graph_weight  weight;
 } _graph_edge;
 
 typedef size_t _graph_size_t;
