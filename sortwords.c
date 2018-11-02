@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "dpress.h"
 
@@ -31,7 +32,7 @@ void sort_words(FILE *in, FILE *out) {
 		for(int i = 0; i < inCount; i++) {
 			_char_seq chSeq;
 			chSeq.pos = i;
-			chSeq.ch = buffer[i];
+			chSeq.ch = tolower(buffer[i]);
 			line[i] = chSeq;
 		}
 
@@ -42,7 +43,7 @@ void sort_words(FILE *in, FILE *out) {
 		for(int i = 0; i < inCount; i++) {
 			printf (" %d", line[i].pos);
 		}
-		printf ("\n");
+		printf (" %s", buffer);
 
 		/*
 		size_t outCount = fwrite (buffer, sizeof(unsigned char), inCount, out);
